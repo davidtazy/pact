@@ -23,7 +23,7 @@ services:
     environment:
       PACT_BROKER_DATABASE_URL: postgres://pact:pact@postgres:5432/pact_broker
       PACT_BROKER_DATABASE_ADAPTER: postgres
-      PACT_BROKER_BASE_URL: http://localhost:9292
+      PACT_BROKER_BASE_URL: ${PACT_BROKER_PUBLIC_URL:-http://192.168.1.39:9292}
       PACT_BROKER_BASIC_AUTH_USERNAME: pact
       PACT_BROKER_BASIC_AUTH_PASSWORD: pact
       PACT_BROKER_WEBHOOK_SCHEME_WHITELIST: http
@@ -40,7 +40,7 @@ services:
       PORT: 7070
       EVENTS_DIR: /app/events
       WEBHOOK_SECRET: ${WEBHOOK_SECRET:-local-secret}
-      PACT_URL_HOST_ALLOWLIST: localhost,127.0.0.1,pact-broker
+      PACT_URL_HOST_ALLOWLIST: ${PACT_URL_HOST_ALLOWLIST:-localhost,127.0.0.1,pact-broker,192.168.1.39,gitlab.local}
       EXPECTED_CONSUMER: the-consumer
       EXPECTED_PROVIDER: the-provider
     volumes:

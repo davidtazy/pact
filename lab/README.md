@@ -107,12 +107,32 @@ Important variables:
 
 | Variable | Default |
 |---|---|
-| `PACT_BROKER_BASE_URL` | `http://localhost:9292` |
+| `PACT_BROKER_BASE_URL` | `http://192.168.1.39:9292` |
+| `PACT_BROKER_PUBLIC_URL` | `http://192.168.1.39:9292` |
+| `PACT_URL_HOST_ALLOWLIST` | `localhost,127.0.0.1,pact-broker,192.168.1.39,gitlab.local` |
 | `PACT_BROKER_USERNAME` | `pact` |
 | `PACT_BROKER_PASSWORD` | `pact` |
 | `WEBHOOK_SECRET` | `local-secret` |
 | `BRANCH` | `main` |
 | `TARGET_ENV` | `test` |
+
+## Remote access
+
+The default lab URL is `http://192.168.1.39:9292`. The broker advertises this URL in generated links and pact URLs, so remote browsers and the provider verifier can use them directly.
+
+To use `gitlab.local` instead, set both:
+
+```dotenv
+PACT_BROKER_PUBLIC_URL=http://gitlab.local:9292
+PACT_BROKER_BASE_URL=http://gitlab.local:9292
+```
+
+`gitlab.local` must resolve to `192.168.1.39` on the remote host (DNS or `/etc/hosts`). When changing `PACT_BROKER_PUBLIC_URL`, restart the stack:
+
+```bash
+docker compose up -d
+```
+
 
 Versions default to `consumer-<epoch>` and `provider-<epoch>`.
 
