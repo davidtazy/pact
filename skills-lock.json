@@ -1,11 +1,53 @@
 {
   "version": 1,
   "skills": {
+    "asyncapi-generator": {
+      "source": "pactflow/pactflow-agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/swagger-contract-testing/skills/asyncapi-generator/SKILL.md",
+      "computedHash": "48f81b81681d7d5dc9ca427b121c50ea37dca80b07eb2312b6c430a7be31f220"
+    },
+    "asyncapi-parser": {
+      "source": "pactflow/pactflow-agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/swagger-contract-testing/skills/asyncapi-parser/SKILL.md",
+      "computedHash": "28e0535b6e29a8ad1637d917b771811c2ba60544bfd23151f8e8f9e6a03ebdaa"
+    },
     "contract-testing-flywheel": {
       "source": "pactflow/pactflow-agent-skills",
       "sourceType": "github",
       "skillPath": "plugins/contract-testing-flywheel/skills/contract-testing-flywheel/SKILL.md",
       "computedHash": "b84db35c3001b50a470a7603e40b003be4be2e0b70e3ea19d72454b825bcf2f0"
+    },
+    "drift-testing": {
+      "source": "pactflow/pactflow-agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/swagger-contract-testing/skills/drift-testing/SKILL.md",
+      "computedHash": "5d5c0b44326ec83526ef949ef36d2de740dbd262047714ee8c628b8e528de364"
+    },
+    "oas-generator": {
+      "source": "pactflow/pactflow-agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/swagger-contract-testing/skills/oas-generator/SKILL.md",
+      "computedHash": "10754c2f44038092f0443ae72cee9a9c131eeb0bee54123b3817e4e9097361e4"
+    },
+    "openapi-parser": {
+      "source": "pactflow/pactflow-agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/swagger-contract-testing/skills/openapi-parser/SKILL.md",
+      "computedHash": "e898a37cd2f7451f7e7b8d84f23ed9e999964abf95c90cde0d72bee48a932ded"
+    },
+    "pact-coverage": {
+      "source": "pactflow/pactflow-agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/swagger-contract-testing/skills/pact-coverage/SKILL.md",
+      "computedHash": "dde6236a6a64aaf0bcb1d3de5916425e77bffe2a6162a05b6a37a98e79aac801"
+    },
+    "pactflow": {
+      "source": "pactflow/pactflow-agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/swagger-contract-testing/skills/pactflow/SKILL.md",
+      "computedHash": "6cea6bd42e520db4dd1362af55ba696f8c1347c9acf697e09638df384c9933ff"
     }
   }
 }
