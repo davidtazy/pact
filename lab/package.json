@@ -1,0 +1,12 @@
+{
+  "name": "pact-lab",
+  "private": true,
+  "description": "Minimal local Pact consumer/provider lab with a webhook-driven mock CI",
+  "scripts": {
+    "install:all": "npm install && npm --prefix consumer install && npm --prefix provider install && npm --prefix webhook-receiver install",
+    "test": "npm --prefix consumer run test:pact && npm --prefix provider run verify:pact && npm --prefix webhook-receiver test"
+  },
+  "devDependencies": {
+    "@pact-foundation/pact-cli": "^18.10.9"
+  }
+}

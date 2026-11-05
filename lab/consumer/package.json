@@ -1,0 +1,16 @@
+{
+  "name": "pact-lab-consumer",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "test:pact": "rm -rf pacts && jest --runInBand"
+  },
+  "devDependencies": {
+    "@pact-foundation/pact": "^17.1.4",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.15.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.4.15",
+    "typescript": "^5.9.0"
+  }
+}

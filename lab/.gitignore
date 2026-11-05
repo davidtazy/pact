@@ -1,0 +1,11 @@
+node_modules/
+dist/
+pacts/
+logs/
+webhook-events/pending/*.json
+webhook-events/processing/*.json
+webhook-events/processed/*.json
+webhook-events/results/*.json
+webhook-events/.worker.pid
+webhook-events/.worker.lock
+.env

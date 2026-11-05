@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "contract-testing-flywheel": {
+      "source": "pactflow/pactflow-agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/contract-testing-flywheel/skills/contract-testing-flywheel/SKILL.md",
+      "computedHash": "b84db35c3001b50a470a7603e40b003be4be2e0b70e3ea19d72454b825bcf2f0"
+    }
+  }
+}
