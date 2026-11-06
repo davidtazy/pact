@@ -60,12 +60,45 @@ public static SelectorBuilder consumerVersionSelectors() {
 
 Or pass raw JSON via `pactbroker.consumerversionselectors.rawjson`.
 
+### Job A on a feature branch vs main
+
+The same job definition can serve both, but the effective selectors and pending/WIP settings are different.
+
+| Provider context | Selectors | Pending | WIP | Publish branch |
+|---|---|---|---|---|
+| **Feature branch** | `mainBranch` + `matchingBranch` + `deployedOrReleased` | `false` | none | feature branch |
+| **Main branch** | `mainBranch` + `matchingBranch` + `deployedOrReleased` | `true` | `includeWipPactsSince` | `main` |
+| **Job B webhook** | none — `PACT_URL` only | n/a | n/a | webhook provider branch |
+
+- `matchingBranch` is dynamic: on provider `feat-x` it selects consumer `feat-x`; on provider `main` it selects consumer `main`.
+- If consumer and provider branch names differ, `matchingBranch` finds nothing. Use an explicit `{ "branch": "consumer-branch" }` selector or enforce a shared branch-naming convention.
+- On a feature branch, set `enablePendingPacts=false` so the new consumer need fails the provider branch until it is implemented.
+- Do **not** set `includeWipPactsSince` on a feature branch. WIP belongs to the main branch.
+- Keep `deployedOrReleased` on the feature-branch job so the change is checked against consumers already running in environments.
+- A success on the provider feature branch is early feedback only. It does **not** make the pact non-pending for `main`.
+- The final gate is provider `main`: its WIP verification must succeed before consumer `can-i-deploy` passes.
+
+Feature-branch flow:
+
+1. Consumer publishes a feature-branch pact.
+2. Provider feature branch verifies it via `matchingBranch`; success is branch-local.
+3. Provider merges the implementation to `main`.
+4. Provider `main` pipeline verifies the consumer feature pact via WIP and publishes success against the provider `main` version.
+5. Consumer `can-i-deploy` / `can-i-merge` now passes.
+
+If you want separate behaviour without duplicating the whole job, use CI rules to set:
+
+```text
+feature branch: PENDING=false, WIP_SINCE unset
+main branch:    PENDING=true,  WIP_SINCE=<date>
+```
+
 ### Other attributes to handle for Job A
 
 | Attribute | What to set | Why |
 |---|---|---|
-| `enablePendingPacts` | `true` | New consumer expectations should not break the provider build. Failures are still published to the broker; only the build exit code is softened. |
-| `includeWipPactsSince` | e.g. `2025-01-01` | Automatically verify new consumer feature-branch pacts not explicitly selected. Pair with pending. Use a ~30-day window. |
+| `enablePendingPacts` | `true` on main, `false` on feature branches | New consumer expectations should not break the provider main build. On a feature branch, disable pending so the change must actually pass. Failures are still published to the broker. |
+| `includeWipPactsSince` | e.g. `2025-01-01` on main only | Automatically verify new consumer feature-branch pacts not explicitly selected. Pair with pending. Use a ~30-day window. Do not set it on a feature branch. |
 | `providerVersion` | `$CI_COMMIT_SHA` | Must match the code being verified. |
 | `providerVersionBranch` | `$CI_COMMIT_REF_NAME` | Needed for pending/WIP calculations and matrix correctness. |
 | `publishVerificationResult` | `true` | Writes the pass/fail result back to the broker. |
@@ -75,7 +108,7 @@ Or pass raw JSON via `pactbroker.consumerversionselectors.rawjson`.
 | `@PactFilter` / `pact.filter.description` | optional | Filters **interactions**, not pacts. Useful for path or state-based subsets. |
 | `pact.verifier.buildUrl` | optional | Links the broker result back to the CI build. |
 
-Important: `enablePendingPacts` and `includeWipPactsSince` belong **only to Job A**. They are calculated against the provider branch.
+Important: `enablePendingPacts` and `includeWipPactsSince` belong **only to Job A**, and their values are context-specific: pending on main, non-pending on feature branches, WIP on main only. They are calculated against the provider branch.
 
 ### What pending does and does not do
 
@@ -139,7 +172,9 @@ or use `@PactUrl` / `@PactUrl(urls = "${PACT_URL}")` if your harness is structur
 |---|---|---|
 | Pact selection | Consumer version selectors | Single `PACT_URL` |
 | Selector set | `mainBranch`, `matchingBranch`, `deployedOrReleased` | None |
-| Pending pacts | Enabled | Not applicable |
+| Feature branch behaviour | `matchingBranch` selects consumer branch of the same name; pending disabled; no WIP | n/a |
+| Main branch behaviour | pending enabled; WIP verifies recent consumer feature-branch pacts | n/a |
+| Pending pacts | Enabled on main, disabled on feature branches | Not applicable |
 | WIP pacts | Optional, main branch | Not applicable |
 | Provider version | `$CI_COMMIT_SHA` | `$PACT_PROVIDER_VERSION` |
 | Provider branch | `$CI_COMMIT_REF_NAME` | `$PACT_PROVIDER_BRANCH` |
@@ -161,6 +196,8 @@ or use `@PactUrl` / `@PactUrl(urls = "${PACT_URL}")` if your harness is structur
 8. **Filtering interactions and expecting pacts to be filtered** — `@PactFilter` filters interactions; consumer version selectors filter pacts.
 9. **No provider branch set** — pending/WIP calculations and matrix results become unreliable.
 10. **Too wide a WIP window** — broker query load and timeouts grow with the date range.
+11. **Using main-branch WIP/pending settings on a feature branch** — feature branches should disable pending and not enable WIP.
+12. **Expecting a feature-branch success to unblock main** — pending/verification is per provider branch; provider `main` must verify the pact too.
 
 ---
 
